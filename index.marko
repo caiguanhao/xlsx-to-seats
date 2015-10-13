@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>xlsx-to-seats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body>
+  <h2>
+    <a href="/">xlsx-to-seats</a>
+  </h2>
+  <form action="/" method="POST" enctype="multipart/form-data">
+    每个工作表名称填写区名，每个格代表一个座位，格式：票务ID,排数,座数
+    上传 XLSX: <input name="file" type="file"
+    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    onchange="this.form.submit()">
+  </form>
+  <hr>
+  <p>
+    更改演出ID：
+    <input type="text" id="perfid" value="5668">
+    复制代码到rails c：
+  </p>
+  <pre style="word-break: break-word;" contenteditable>
+old_logger, old_echo = ActiveRecord::Base.logger, conf.echo
+
+ActiveRecord::Base.logger = nil
+conf.echo = false
+
+<span id="code"></span>
+
+all = ${JSON.stringify(data.ret)}
+
+all.each{|areaname, seats|
+  area = SeatArea.where(name: areaname.to_s, performance_id: perfid).first_or_create!
+
+  seats.each{|tsid, tsseats|
+    ts = TicketSetting.find tsid.to_s
+
+    seatsAvail = Seat.create(tsseats.map{|s|
+      {x: s[0], y: s[1], row: s[2], number: s[3], seat_area: area}
+    })
+    seatsReserved = Seat.create(seats.except(tsid).values.flatten(1).map{|s|
+      {status: 'reserved', x: s[0], y: s[1], row: s[2], number: s[3], seat_area: area}
+    })
+
+    ts.seats = seatsAvail + seatsReserved
+    ts.save!
+  }
+}
+
+ActiveRecord::Base.logger = old_logger
+conf.echo = old_echo
+
+</pre>
+<script>
+  var $ = document.getElementById.bind(document);
+  function update () {
+    $('code').innerHTML = 'perfid = ' + $('perfid').value;
+  }
+  update();
+  $('perfid').addEventListener('keyup', update);
+</script>
+</body>
+</html>

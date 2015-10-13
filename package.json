@@ -1,0 +1,38 @@
+{
+  "name": "xlsx-to-seats",
+  "version": "1.0.0",
+  "description": "Convert xlsx to seats",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node index.js",
+    "mon": "nodemon --ext js,marko index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caiguanhao/xlsx-to-seats"
+  },
+  "keywords": [
+    "xlsx",
+    "excel",
+    "spreadsheet",
+    "seat"
+  ],
+  "author": "Cai Guanhao <caiguanhao@gmail.com> (Choi Goon-ho)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/caiguanhao/xlsx-to-seats/issues"
+  },
+  "homepage": "https://github.com/caiguanhao/xlsx-to-seats",
+  "dependencies": {
+    "express": "^4.13.3",
+    "lodash": "^3.10.1",
+    "marko": "^2.7.27",
+    "multiparty": "^4.1.2",
+    "node-xlsx": "^0.6.0"
+  },
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3"
+  }
+}
