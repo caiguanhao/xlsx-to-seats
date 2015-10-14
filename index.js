@@ -1,9 +1,38 @@
+var Q = require('q');
 var parse = require('./parse');
 var express = require('express');
 var multiparty = require('multiparty');
 
 require('marko/node-require').install();
 var index = require('./index.marko');
+var error = require('./error.marko');
+
+function getUploadData (req) {
+  var deferred = Q.defer();
+  var data = [];
+
+  var form = new multiparty.Form();
+  form.on('error', function (err) {
+    deferred.reject(err);
+  });
+
+  form.on('part', function (part) {
+    if (!part.filename) {
+      return part.resume();
+    }
+    part.on('data', function (chunk) {
+      data.push(chunk);
+    });
+  });
+
+  form.on('close', function () {
+    deferred.resolve(data);
+  });
+
+  form.parse(req);
+
+  return deferred.promise;
+}
 
 var app = express();
 
@@ -12,36 +41,20 @@ app.get('/', function (req, res) {
 });
 
 app.post('/', function (req, res, next) {
-  var ret = {};
-  var form = new multiparty.Form();
-  form.on('error', function (err) {
-    next(err);
-  });
-  form.on('part', function (part) {
-    if (!part.filename) {
-      next();
-      return;
-    }
-    var data = [];
-    part.on('data', function (chunk) {
-      data.push(chunk);
-    });
-    part.on('end', function () {
+  getUploadData(req).then(function (data) {
+    var ret;
+    if (data.length > 0) {
       ret = parse(Buffer.concat(data));
-    });
-    part.on('error', function (err) {
-      next(err);
-    });
-  });
-  form.on('close', function () {
+    } else {
+      ret = {}
+    }
     index.render({ ret: ret }, res);
-  });
-  form.parse(req);
+  }).catch(next);
 });
 
 app.use(function (err, req, res, next) {
   console.error(err);
-  res.status(500).send({ error: err });
+  error.render({ err: (err && err.stack) ? err.stack : err }, res);
 });
 
 app.use(function (req, res, next) {
