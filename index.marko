@@ -5,13 +5,19 @@
 <title>xlsx-to-seats</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<style>
+  a { color: blue; }
+</style>
 </head>
 <body>
   <h2>
     <a href="/">xlsx-to-seats</a>
   </h2>
   <form action="/" method="POST" enctype="multipart/form-data">
-    每个工作表名称填写区名，每个格代表一个座位，格式：票务ID,排数,座数
+    <p>
+      每个工作表名称填写区名，每个格代表一个座位，格式：票务ID,排数,座数
+      <a href="/demo.xlsx">下载示例XLSX</a>
+    </p>
     上传 XLSX: <input name="file" type="file"
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     onchange="this.form.submit()">
@@ -54,6 +60,9 @@ ActiveRecord::Base.logger = old_logger
 conf.echo = old_echo
 
 </pre>
+<p>
+  <a href="https://github.com/caiguanhao/xlsx-to-seats">source code</a>
+</p>
 <script>
   var $ = document.getElementById.bind(document);
   function update () {

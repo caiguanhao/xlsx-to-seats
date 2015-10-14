@@ -1,4 +1,5 @@
 var Q = require('q');
+var fs = require('fs');
 var parse = require('./parse');
 var express = require('express');
 var multiparty = require('multiparty');
@@ -50,6 +51,10 @@ app.post('/', function (req, res, next) {
     }
     index.render({ ret: ret }, res);
   }).catch(next);
+});
+
+app.get('/demo.xlsx', function (req, res) {
+  fs.createReadStream('./test/fixtures/test.xlsx').pipe(res);
 });
 
 app.use(function (err, req, res, next) {
