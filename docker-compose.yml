@@ -1,0 +1,6 @@
+app:
+  build: .
+  restart: always
+  mem_limit: 100M
+  ports:
+    - '127.0.0.1:38123:3000'
