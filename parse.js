@@ -15,9 +15,13 @@ function parseSpreadSheet (buffer) {
       _.each(row, function (seat, x) {
         if (seat && seat.indexOf(',') > -1) {
           var n = seat.split(',');
-          if (n.length === 3) {
+          if (n.length >= 3) {
             data[+n[0]] = data[+n[0]] || [];
-            data[+n[0]].push([x, y, +n[1], +n[2]]);
+            var item = [x, y, +n[1], +n[2]];
+            if (n.length > 3) {
+              item.push(n[3]);
+            }
+            data[+n[0]].push(item);
           }
         }
       });

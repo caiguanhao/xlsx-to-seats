@@ -45,7 +45,7 @@ all.each{|areaname, seats|
     ts = TicketSetting.find tsid.to_s
 
     seatsAvail = Seat.create(tsseats.map{|s|
-      {x: s[0], y: s[1], row: s[2], number: s[3], seat_area: area}
+      {status: s[4] || 'available', x: s[0], y: s[1], row: s[2], number: s[3], seat_area: area}
     })
     seatsReserved = Seat.create(seats.except(tsid).values.flatten(1).map{|s|
       {status: 'reserved', x: s[0], y: s[1], row: s[2], number: s[3], seat_area: area}
