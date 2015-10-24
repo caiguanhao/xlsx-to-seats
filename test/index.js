@@ -1,6 +1,8 @@
 var fs = require('fs');
 var parse = require('../parse');
 var expect = require('chai').expect;
+var rewire = require('rewire');
+var number2letter = rewire('../parse').__get__('number2letter');
 
 describe('Parse XLSX', function () {
   it('should work as expected', function () {
@@ -58,5 +60,20 @@ describe('Parse XLSX', function () {
         }
       }
     });
+  });
+});
+
+describe('Column number to letter', function () {
+  it('should work as expected', function () {
+    var map = {
+      0: 'A', 1: 'B', 2: 'C', 25: 'Z',
+      26: 'AA', 27: 'AB', 28: 'AC', 51: 'AZ',
+      52: 'BA', 53: 'BB', 54: 'BC', 77: 'BZ',
+      701: 'ZZ',
+      730: 'ABC'
+    };
+    for (var n in map) {
+      expect(number2letter(n)).to.equal(map[n]);
+    }
   });
 });
