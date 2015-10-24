@@ -2,18 +2,29 @@ var _ = require('lodash');
 var xlsx = require('node-xlsx');
 
 function parseSpreadSheet (buffer) {
-  var ret = {};
-  var spreadsheet = xlsx.parse(buffer);
-
-  if (!(spreadsheet instanceof Array) || spreadsheet.length < 1) {
-    return ret;
+  var spreadsheets = xlsx.parse(buffer);
+  if (!(spreadsheets instanceof Array)) {
+    throw '不是有效的 XSLX SpreadSheet 文件。';
   }
-
-  _.each(spreadsheet, function (sheet) {
+  if (spreadsheets.length < 1) {
+    throw '至少要有一个工作表。';
+  }
+  var ret = {
+    warnings: [],
+    parsed: {}
+  };
+  _.each(spreadsheets, function (sheet) {
     var data = {};
+    if (/^sheet/i.test(sheet.name)) {
+      ret.warnings.push('是不是还没有为工作表「' + sheet.name + '」更改名称？');
+    }
     _.each(sheet.data, function (row, y) {
       _.each(row, function (seat, x) {
-        if (seat && seat.indexOf(',') > -1) {
+        if (typeof seat !== 'string' || (seat.length > 0 && seat.indexOf(',') === -1)) {
+          if (seat !== undefined && seat !== null) {
+            ret.warnings.push('已忽略工作表「' + sheet.name + '」' + y + '行' + x + '列格式错误的内容:「' + seat + '」');
+          }
+        } else if (seat.length > 0) {
           var n = seat.split(',');
           if (n.length >= 3) {
             data[+n[0]] = data[+n[0]] || [];
@@ -27,7 +38,7 @@ function parseSpreadSheet (buffer) {
       });
     });
     if (Object.keys(data).length > 0) {
-      ret[sheet.name] = data;
+      ret.parsed[sheet.name] = data;
     }
   });
 

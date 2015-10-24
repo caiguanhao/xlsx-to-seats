@@ -38,18 +38,20 @@ function getUploadData (req) {
 var app = express();
 
 app.get('/', function (req, res) {
-  index.render({ ret: {} }, res);
+  index.render(null, res);
 });
 
 app.post('/', function (req, res, next) {
   getUploadData(req).then(function (data) {
-    var ret;
-    if (data.length > 0) {
-      ret = parse(Buffer.concat(data));
-    } else {
-      ret = {}
+    var ret, err;
+    try {
+      if (data.length > 0) {
+        ret = parse(Buffer.concat(data));
+      }
+    } catch (e) {
+      err = e;
     }
-    index.render({ ret: ret }, res);
+    index.render({ ret: ret, err: err }, res);
   }).catch(next);
 });
 

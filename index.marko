@@ -22,6 +22,15 @@
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     onchange="this.form.submit()">
   </form>
+  <div style="background: #ff0000; color: #fff; padding: 10px; margin: 10px 0;" if="data.err">
+    FATAL ERROR: ${data.err}
+  </div>
+  <div style="background: #ffff00; color: #000; padding: 10px; margin: 10px 0;"
+       if="data.ret && (data.ret.warnings instanceof Array) && data.ret.warnings.length">
+    <ul style="margin: 0;">
+      <li for="warning in data.ret.warnings">WARNING: ${warning}</li>
+    </ul>
+  </div>
   <hr>
   <p>
     更改演出ID：
@@ -36,7 +45,7 @@ conf.echo = false
 
 <span id="code"></span>
 
-all = ${JSON.stringify(data.ret)}
+all = ${data.ret ? JSON.stringify(data.ret.parsed) : '{}'}
 
 all.each{|areaname, seats|
   area = SeatArea.where(name: areaname.to_s, performance_id: perfid).first_or_create!

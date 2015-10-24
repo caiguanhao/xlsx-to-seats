@@ -6,8 +6,9 @@ describe('Parse XLSX', function () {
   it('should work as expected', function () {
     var xlsx = fs.readFileSync(__dirname + '/fixtures/test.xlsx');
     var data = parse(xlsx);
-    expect(data).to.deep.equal(
-      {
+    expect(data).to.deep.equal({
+      warnings: [],
+      parsed: {
         "一层": {
           "8250": [
             [2,8,12,45], [3,8,12,39], [1,9,13,47], [2,9,13,45],
@@ -56,6 +57,6 @@ describe('Parse XLSX', function () {
           ]
         }
       }
-    );
+    });
   });
 });
