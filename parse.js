@@ -42,12 +42,12 @@ function parseSpreadSheet (buffer) {
         } else if (seat.length > 0) {
           var n = seat.split(',');
           if (n.length >= 3) {
-            data[+n[0]] = data[+n[0]] || [];
+            data[n[0]] = data[n[0]] || [];
             var item = [x, y, +n[1], +n[2]];
             if (n.length > 3) {
               item.push(n[3]);
             }
-            data[+n[0]].push(item);
+            data[n[0]].push(item);
           }
         }
       });
