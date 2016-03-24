@@ -56,11 +56,11 @@ all.each{|areaname, seats|
     seatsAvail = Seat.create(tsseats.map{|s|
       {status: s[4] || 'available', x: s[0], y: s[1], row: s[2], number: s[3], seat_area: area}
     })
-    seatsReserved = Seat.create(seats.except(tsid).values.flatten(1).map{|s|
-      {status: 'reserved', x: s[0], y: s[1], row: s[2], number: s[3], seat_area: area}
+    seatsOthers = Seat.create(seats.except(tsid).values.flatten(1).map{|s|
+      {status: 'others', x: s[0], y: s[1], row: s[2], number: s[3], seat_area: area}
     })
 
-    ts.seats = seatsAvail + seatsReserved
+    ts.seats = seatsAvail + seatsOthers
     ts.save!
   }
 }
